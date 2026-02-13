@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  mysql:
+    build:
+      context: .
+      dockerfile: docker/mysql/Dockerfile
+    container_name: myapp_mysql
+    env_file:
+      - .env
+    ports:
+    - "3009:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  tomcat:
+    build:
+      context: .
+      dockerfile: docker/tomcat/Dockerfile
+    container_name: myapp_tomcat
+    env_file:
+      - .env
+    environment:
+      JAVA_OPTS: ${JAVA_OPTS}
+    ports:
+      - "${APP_PORT}:8080"
+    depends_on:
+      - mysql
+
+
+volumes:
+  mysql_data:
